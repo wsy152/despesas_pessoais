@@ -17,12 +17,10 @@ class ExpensesApp extends StatelessWidget {
         primarySwatch: Colors.red,
         fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
-          headline1: TextStyle(
-            fontFamily: 'Quicksand',
-            fontSize: 20,
-            fontWeight: FontWeight.w900
-          )
-        ),
+            headline1: TextStyle(
+                fontFamily: 'Quicksand',
+                fontSize: 20,
+                fontWeight: FontWeight.w900)),
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
                 title: TextStyle(
@@ -42,22 +40,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [
+  final List<Transaction> _transactions = [];
 
-  ];
-
-  List<Transaction> get _recentTransaction{
-
-    return _transactions.where((tr){
-      return tr.date.isAfter(DateTime.now().subtract(
-        Duration(days: 7)
-      ));
+  List<Transaction> get _recentTransaction {
+    return _transactions.where((tr) {
+      return tr.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
     }).toList();
-
   }
 
-
-  _addTransaction(String title, double value,DateTime date) {
+  _addTransaction(String title, double value, DateTime date) {
     final newTransaction = Transaction(
         id: Random().nextDouble().toString(),
         title: title,
@@ -68,14 +59,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     Navigator.of(context).pop();
   }
-  _deleteTransaction(String id){
-    setState(() {
-      _transactions.removeWhere((tr){
-        return tr.id == id;
 
+  _deleteTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((tr) {
+        return tr.id == id;
       });
     });
-
   }
 
   _openTransactionFormModal(BuildContext context) {
@@ -89,21 +79,31 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: Text('Despesas Pessoais'),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _openTransactionFormModal(context),
+        ),
+      ],
+    );
+    final availableHeight = MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Despesas Pessoais'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _openTransactionFormModal(context),
-          ),
-        ],
-      ),
+      appBar: appBar,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-         Chart(recentTransaction: _recentTransaction),
-          TransactionList(_transactions, _deleteTransaction),
+          Container(
+            height: availableHeight * 0.3,
+            child: Chart(recentTransaction: _recentTransaction),
+          ),
+          Expanded(
+            child: Container(
+              height: availableHeight * 0.7,
+              child: TransactionList(_transactions, _deleteTransaction),
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
